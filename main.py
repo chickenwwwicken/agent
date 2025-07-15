@@ -14,6 +14,11 @@ client = genai.Client(api_key=api_key)
 # ------------------------------------------------------------------------
 
 def main():
+    # error if no prompt
+    if len(sys.argv) < 2:
+        print("Usage: uv run main.py <'prompt'>")
+        sys.exit(1)
+
     # sys.argv is str after the "run" command.
     user_prompt = sys.argv[1]
 
@@ -22,10 +27,6 @@ def main():
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
-    # error if no prompt
-    if len(sys.argv) < 2:
-        print("Usage: uv run main.py <'prompt'>")
-        sys.exit(1)
 
     response = client.models.generate_content(
         model='gemini-2.0-flash-001', 
