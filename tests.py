@@ -1,4 +1,5 @@
 from functions.get_files_info import get_files_info
+from functions.get_file_content import get_file_content
 
 result_current = """
     Result for current directory:
@@ -22,33 +23,51 @@ result_outside = 'Error: Cannot list "../" as it is outside the permitted workin
 
 
 def main():
+#
+# ==-00---- -------get_file_content() tests-----------
+# 
+#    current_test = get_files_info("calculator", ".")
+#    pkg_test = get_files_info("calculator", "pkg")
+#
+#    # current dir test
+#    if "pkg:" in current_test.split() and "tests.py:" in current_test.split():
+#        print(get_files_info("calculator", "."))
+#    else:
+#        print(get_files_info("calculator", "."))
+#
+#    # pkg test
+#    if "render.py:" in pkg_test.split() and "calculator.py:" in pkg_test.split():
+#        print(get_files_info("calculator", "pkg"))
+#    else:
+#        print(get_files_info("calculator", "pkg"))
+#
+#    # bin test
+#    if get_files_info("calculator", "/bin") == result_bin: 
+#        print(get_files_info("calculator", "/bin"))
+#    else:
+#        print(get_files_info("calculator", "/bin"))
+#
+#    # ../ test
+#    if get_files_info("calculator", "../") == result_outside: 
+#        print(get_files_info("calculator", "../"))
+#    else:
+#        print(get_files_info("calculator", "../"))
+#
 
-    current_test = get_files_info("calculator", ".")
-    pkg_test = get_files_info("calculator", "pkg")
+# ==-00---- -------get_file_content() tests-----------
 
-    # current dir test
-    if "pkg:" in current_test.split() and "tests.py:" in current_test.split():
-        print(get_files_info("calculator", "."))
-    else:
-        print(get_files_info("calculator", "."))
+    result = get_file_content("calculator", "main.py")
+    print(result)
 
-    # pkg test
-    if "render.py:" in pkg_test.split() and "calculator.py:" in pkg_test.split():
-        print(get_files_info("calculator", "pkg"))
-    else:
-        print(get_files_info("calculator", "pkg"))
+    result = get_file_content("calculator", "pkg/calculator.py")
+    print(result)
 
-    # bin test
-    if get_files_info("calculator", "/bin") == result_bin: 
-        print(get_files_info("calculator", "/bin"))
-    else:
-        print(get_files_info("calculator", "/bin"))
+    result = get_file_content("calculator", "/bin/cat")
+    print(result)
 
-    # ../ test
-    if get_files_info("calculator", "../") == result_outside: 
-        print(get_files_info("calculator", "../"))
-    else:
-        print(get_files_info("calculator", "../"))
+    result = get_file_content("calculator", "pkg/does_not_exist.py")
+    print(result)
+
 
 if __name__ == "__main__":
     main()

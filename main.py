@@ -10,8 +10,10 @@ from google.genai import types
 
 client = genai.Client(api_key=api_key)
 
+
 # ------------------------------------------------------------------------
 # ------------------------------------------------------------------------
+
 
 def main():
     # error if no prompt
@@ -19,14 +21,13 @@ def main():
         print("Usage: uv run main.py <'prompt'>")
         sys.exit(1)
 
-    # sys.argv is str after the "run" command.
-    user_prompt = sys.argv[1]
+        # sys.argv is str after the "run" command.
+        user_prompt = sys.argv[1]
 
-    # creating list for conversation
-    messages = [
-        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
-    ]
-
+        # creating list for conversation
+        messages = [
+            types.Content(role="user", parts=[types.Part(text=user_prompt)]),
+        ]
 
     response = client.models.generate_content(
         model='gemini-2.0-flash-001', 
