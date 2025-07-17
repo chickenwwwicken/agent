@@ -21,14 +21,14 @@ def run_python_file(working_directory, file_path, args=[]):
         return f'Error: "{file_path}" is not a Python file.'
 
     # same as uv run <path> <flags> 
-    run_exec_list = ["uv", "run", file_full_path]
+    commands = ["uv", "run", file_full_path]
     for arg in args:
-        run_exec_list.append(f'{arg}')
+        commands.append(f'{arg}')
 
     # subprocess.run object that returns:
     # a completed.process object
     run_this_b = subprocess.run(
-        run_exec_list,
+        commands,
         capture_output=True,
         timeout=30,
         cwd=dir_path,
@@ -47,7 +47,7 @@ def run_python_file(working_directory, file_path, args=[]):
             return 'No output produced.'
 
         else:
-            output_list = [f'STDOUT: {str(stdout)}', f'STDERR: {str(stderr)}']
+            output_list = [f'STDOUT:\n{str(stdout)}', f'STDERR:\n{str(stderr)}']
             return "\n".join(output_list)
 
     except Exception as e:

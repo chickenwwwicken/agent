@@ -5,9 +5,6 @@ from google.genai import types
 from dotenv import load_dotenv
 
 
-
-
-
 # ------------------------------------------------------------------------
 
 def main():
@@ -50,6 +47,7 @@ def main():
     # no verbose flag
     else:
         print(response.text)
+
 
 if __name__ == "__main__":
     main()
