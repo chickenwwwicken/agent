@@ -62,15 +62,12 @@ def main():
         print(f'Prompt tokens: {usage.prompt_token_count}')
         print(f'Response tokens: {usage.candidates_token_count}')
 
-
-        if response.function_calls:
-            print(f'Calling function: {function_call_part.name}({function_call_part.args)')
-        else:
-            print(response.text)
-
     # no verbose flag
-    else:
-        print(response.text)
+    if not response.function_calls:
+        return response.text
+
+    for function_call_part in response.function_calls:
+        print(f'Calling function: {function_call_part.name}({function_call_part.args})')
 
 
 if __name__ == "__main__":
