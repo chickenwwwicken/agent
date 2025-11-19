@@ -17,13 +17,6 @@ available_functions = types.Tool(
     ]
 )
 
-function_dict = {
-    "working_directory": './calculator',
-    "get_files_info": get_files_info,
-    "get_file_content": get_file_content,
-    "run_python_file": run_python_file,
-    "write_file": write_file,
-}
 
 def call_function(function_call_part, verbose=False):
     function_name = function_call_part.name
@@ -32,12 +25,18 @@ def call_function(function_call_part, verbose=False):
     else:
         print(f" - Calling function: {function_name}")
 
-    # prepare kwargs
-    args = dict(function_call_part.args or {})
-    args["working_directory"] = "./calculator"
+    # all the available functions
+    function_dict = {
+        "working_directory": './calculator',
+        "get_files_info": get_files_info,
+        "get_file_content": get_file_content,
+        "run_python_file": run_python_file,
+        "write_file": write_file,
+    }
+
+    func = function_dict.get(function_name)
 
     # If unknown function
-    func = function_dict.get(function_name)
     if func is None:
         return types.Content(
             role="tool",
@@ -49,6 +48,9 @@ def call_function(function_call_part, verbose=False):
             ],
         )
 
+    # prepare kwargs
+    args = dict(function_call_part.args or {})
+    args["working_directory"] = "./calculator"
     result = func(**args)
 
     # Note "from_function_response" requires the response to be a dictionary

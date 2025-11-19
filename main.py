@@ -11,7 +11,7 @@ from call_function import available_functions, call_function
 
 def main():
     load_dotenv()
-    
+
     verbose = "--verbose" in sys.argv
     args = []
 
@@ -41,7 +41,11 @@ def main():
         types.Content(role="user", parts=[types.Part(text=user_prompt)]),
     ]
 
-    generate_content(client, messages, verbose)
+    result_text, tool_parts = generate_content(client, messages, verbose)
+
+    if result_text:
+        print(result_text)
+
 
 
 def generate_content(client, messages, verbose):
@@ -53,17 +57,34 @@ def generate_content(client, messages, verbose):
         ),
     )
 
-
     if verbose:
+
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
         print("Response tokens:", response.usage_metadata.candidates_token_count)
 
     # no verbose flag
     if not response.function_calls:
-        return response.text
+        return response.text, []
+
+
+    response_list = []
 
     for function_call_part in response.function_calls:
-        print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+
+        function_call_result = call_function(function_call_part, verbose=verbose)
+
+        # raise exception if function call returns empty
+        if not function_call_result.parts[0].function_response.response:
+            raise Exception("fatal error 444")
+
+        if verbose:
+            print(f"-> {function_call_result.parts[0].function_response.response}")
+
+        if function_call_result.parts[0].function_response.response:
+            response_list.append(function_call_result.parts[0])
+
+
+    return response.text, response_list
 
 
 if __name__ == "__main__":
