@@ -5,7 +5,7 @@ from google.genai import types
 from dotenv import load_dotenv
 
 from prompts import system_prompt
-from call_function import available_functions
+from call_function import available_functions, call_function
 
 # ------------------------------------------------------------------------
 
@@ -52,6 +52,7 @@ def generate_content(client, messages, verbose):
             tools=[available_functions], system_instruction=system_prompt
         ),
     )
+
 
     if verbose:
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
