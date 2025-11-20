@@ -1,6 +1,7 @@
 import sys
 import os
 from google import genai
+from config import MAX_ITERS
 from google.genai import types
 from dotenv import load_dotenv
 
@@ -38,19 +39,42 @@ def main():
 
     # creating list for conversation
     messages = [
-        types.Content(role="user", parts=[types.Part(text=user_prompt)]),
+        types.Content(
+            role="user", 
+            parts=[
+                types.Part(
+                    text=user_prompt
+                )
+            ]
+        ),
     ]
 
-    result_text, tool_parts = generate_content(client, messages, verbose)
+    # agentic while loop --------------------------------------------------------
+    # agentic while loop --------------------------------------------------------
+    # agentic while loop --------------------------------------------------------
 
-    if result_text:
-        print(result_text)
+    iteration_count = 0
+
+    while iteration_count < MAX_ITERS: # max iterations is 20
+        iteration_count += 1
+
+        final_text = generate_content(client, messages, verbose)
+
+        if final_text:
+            print(final_text)
+            break
 
 
+
+
+# ------------------------generate content func----------------------------------
+# ------------------------generate content func----------------------------------
+# ------------------------generate content func----------------------------------
 
 def generate_content(client, messages, verbose):
     response = client.models.generate_content(
         model='gemini-2.0-flash-001',
+        # giving the messages list to the model so it has context
         contents=messages,
         config=types.GenerateContentConfig(
             tools=[available_functions], system_instruction=system_prompt
