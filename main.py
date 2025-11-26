@@ -40,7 +40,7 @@ def main():
     # creating list for conversation
     messages = [
         types.Content(
-            role="user", 
+            role="user",
             parts=[
                 types.Part(
                     text=user_prompt
@@ -58,11 +58,21 @@ def main():
     while iteration_count < MAX_ITERS: # max iterations is 20
         iteration_count += 1
 
-        final_text = generate_content(client, messages, verbose)
+        try:
+            final_text, tool_parts = generate_content(client, messages, verbose)
 
-        if final_text:
-            print(final_text)
-            break
+            # model is finished only if:
+            # - there were no tool calls (tool_parts is empty)
+            # - AND final_text is non-empty
+            if final_text and not tool_parts:
+                print("\n")
+                print("===Final response:===")
+                print(final_text)
+                break
+
+        except Exception as e:
+            print(f"Error in generate_content: {e}")
+            break # or decide if you want to keep going
 
 
 
@@ -86,13 +96,19 @@ def generate_content(client, messages, verbose):
         print("Prompt tokens:", response.usage_metadata.prompt_token_count)
         print("Response tokens:", response.usage_metadata.candidates_token_count)
 
+    response_list = []
+
+    # handle model's reply (response.candidates)
+    # candidates = geminis full answer to you
+    # this records "what the model said / what tools it wants to call"
+    for candidate in response.candidates:
+        messages.append(candidate.content)
+
     # no verbose flag
     if not response.function_calls:
         return response.text, []
 
-
-    response_list = []
-
+    # handle tool calls
     for function_call_part in response.function_calls:
 
         function_call_result = call_function(function_call_part, verbose=verbose)
@@ -104,8 +120,23 @@ def generate_content(client, messages, verbose):
         if verbose:
             print(f"-> {function_call_result.parts[0].function_response.response}")
 
+        # function_call_result = types.Content returned by call_function()
+        # function_call_result.parts[0] is the first `part` in that content
+        # function_call_result.parts[0].function_response is the `FunctionResponse` obj
+        # .response is the actual payload from the tool, e.g.:
+        # "Successfully wrote to 'lorem.txt'
         if function_call_result.parts[0].function_response.response:
             response_list.append(function_call_result.parts[0])
+
+
+    # handle tool results (function_call_result)
+    if response_list:
+        messages.append(
+            types.Content(
+                role="user",
+                parts=response_list,
+            )
+        )
 
 
     return response.text, response_list
