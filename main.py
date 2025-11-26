@@ -13,6 +13,12 @@ from call_function import available_functions, call_function
 def main():
     load_dotenv()
 
+    # to run agent commands to fix the code or make new code:
+    # - uv run main.py "prompt"
+
+    # to run calculator commands:
+    # - uv run calculator/main.py "operation"
+
     verbose = "--verbose" in sys.argv
     args = []
 
@@ -27,7 +33,7 @@ def main():
         print('Example: python main.py "How do I fix the calculator"')
         sys.exit(1)
 
-
+    # get the API key in order
     api_key = os.environ.get("GEMINI_API_KEY")
     client = genai.Client(api_key=api_key)
 
